@@ -21,20 +21,25 @@ export const moveStageHandler = (userId, payload) => {
   const serverTime = Date.now();
   const elapsedTime = (serverTime - currentStage.timestamp) / 1000; // 초 단위로 계산
 
-  // 1초당 1점, 100점이상 다음스테이지 이동, 오차범위 5
-  // 클라이언트와 서버 간의 통신 지연시간을 고려해서 오차범위 설정
-  // elapsedTime 은 100 이상 105 이하 일 경우만 통과
-  if (elapsedTime < 100 || elapsedTime > 105) {
-    return { status: 'fail', message: 'Invalid elapsed time' };
-  }
 
   // 게임 에셋에서 다음 스테이지의 존재 여부 확인
   const { stages } = getGameAssets();
+
+  // 1초당 1점, 10점이상 다음스테이지 이동, 오차범위 5
+  // 클라이언트와 서버 간의 통신 지연시간을 고려해서 오차범위 설정
+  // elapsedTime 은 10 이상 10.5 이하 일 경우만 통과
+  console.log('Elapsed Time:', elapsedTime);
+  if (elapsedTime < payload.targetStage.score-1 || elapsedTime >payload.targetStage.score+5 ) {
+    return { status: 'fail', message: 'Invalid elapsed time' };
+  }
+
+  //현재 오류가 나옴 Elapsed Time: 9.999 가 찍이기 떄문에 이거 해결해야 한다.
+
   if (!stages.data.some((stage) => stage.id === payload.targetStage)) {
     return { status: 'fail', message: 'Target stage does not exist' };
   }
-
   // 유저의 다음 스테이지 정보 업데이트 + 현재 시간
   setStage(userId, payload.targetStage, serverTime);
+
   return { status: 'success' };
 };

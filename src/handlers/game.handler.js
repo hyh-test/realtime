@@ -33,7 +33,7 @@ export const gameEnd = (uuid, payload) => {
       stageEndTime = stages[index + 1].timestamp;
     }
     const stageDuration = (stageEndTime - stage.timestamp) / 1000; // 스테이지 지속 시간 (초 단위)
-    totalScore += stageDuration; // 1초당 1점
+    totalScore += stageDuration * 1; //
   });
 
   // 점수와 타임스탬프 검증 (예: 클라이언트가 보낸 총점과 계산된 총점 비교)
