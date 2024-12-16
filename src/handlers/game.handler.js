@@ -16,6 +16,7 @@ export const gameEnd = (uuid, payload) => {
   //:은 이름을 바꾼다
   const { timestamp: gameEndTime, score } = payload;
   const stages = getStage(uuid);
+  const { stages: stageData } = getGameAssets();
 
   if (!stages.length) {
     return { status: 'fail', message: 'No stages found for user' };
@@ -24,6 +25,8 @@ export const gameEnd = (uuid, payload) => {
   // 각 스테이지의 지속 시간을 계산하여 총 점수 계산
   let totalScore = 0;
   stages.forEach((stage, index) => {
+    const currentStageData = stageData.data.find((s) => s.id === stage.id);
+
     let stageEndTime;
     if (index === stages.length - 1) {
       // 마지막 스테이지의 경우 종료 시간이 게임의 종료 시간
@@ -33,7 +36,7 @@ export const gameEnd = (uuid, payload) => {
       stageEndTime = stages[index + 1].timestamp;
     }
     const stageDuration = (stageEndTime - stage.timestamp) / 1000; // 스테이지 지속 시간 (초 단위)
-    totalScore += stageDuration * 1; //
+    totalScore += stageDuration * currentStageData.scorePerSecond;
   });
 
   // 점수와 타임스탬프 검증 (예: 클라이언트가 보낸 총점과 계산된 총점 비교)

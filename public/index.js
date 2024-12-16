@@ -183,6 +183,18 @@ function clearScreen() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
+function gameOver() {
+  gameover = true;
+  score.setHighScore();
+  setupGameReset();
+
+  // 게임 종료 시점에 gameEnd 이벤트 전송
+  sendEvent(3, {
+    timestamp: Date.now(),
+    score: score.getScore(),
+  });
+}
+
 function gameLoop(currentTime) {
   if (previousTime === null) {
     previousTime = currentTime;
@@ -212,9 +224,7 @@ function gameLoop(currentTime) {
   }
 
   if (!gameover && cactiController.collideWith(player)) {
-    gameover = true;
-    score.setHighScore();
-    setupGameReset();
+    gameOver();
   }
   const collideWithItem = itemController.collideWith(player);
   if (collideWithItem && collideWithItem.itemId) {
