@@ -29,21 +29,20 @@ class Score {
   // JSON 파일 로드 함수
   async loadAssets() {
     try {
-      const stageResponse = await fetch('assets/stage.json');
-      const itemResponse = await fetch('assets/item.json');
-      const itemUnlockResponse = await fetch('assets/item_unlock.json');
+      const [stageResponse, itemResponse, itemUnlockResponse] = await Promise.all([
+        fetch('assets/stage.json'),
+        fetch('assets/item.json'),
+        fetch('assets/item_unlock.json'),
+      ]);
 
-      // JSON 파일 파싱
       this.stageData = await stageResponse.json();
       this.itemData = await itemResponse.json();
       this.itemUnlockData = await itemUnlockResponse.json();
 
-      // 로드 완료 후 확인
       console.log('Stage Data:', this.stageData);
       console.log('Item Data:', this.itemData);
       console.log('Item Unlock Data:', this.itemUnlockData);
 
-      // 게임 시작 시, 현재 스테이지 설정 (점수에 맞는 스테이지부터 시작)
       this.setInitialStage();
     } catch (error) {
       console.error('Error loading assets:', error);
