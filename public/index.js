@@ -194,6 +194,7 @@ function gameOver() {
   sendEvent(3, {
     timestamp: Date.now(),
     score: score.getScore(),
+    itemScores: score.getItemScores(),
   });
 }
 
@@ -256,4 +257,3 @@ function gameLoop(currentTime) {
 requestAnimationFrame(gameLoop);
 
 window.addEventListener('keyup', reset, { once: true });
-

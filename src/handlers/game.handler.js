@@ -16,24 +16,37 @@ export const gameEnd = (uuid, payload) => {
   const stages = getStage(uuid);
   const { stages: stageData, items: itemData } = getGameAssets();
   let serverScore = 0;
+  let itemTotalScore = 0;
 
   if (!stages.length) {
     return { status: 'fail', message: '사용자의 스테이지 정보를 찾을 수 없습니다' };
   }
 
-  // 스테이지 지속 시간 기반 점수 계산
+  // 아이템 점수 검증
+  if (itemScores) {
+    for (const [itemId, count] of Object.entries(itemScores)) {
+      const item = itemData.data.find((i) => i.id === parseInt(itemId));
+      if (!item) {
+        return {
+          status: 'fail',
+          message: '존재하지 않는 아이템입니다',
+          itemId,
+        };
+      }
+      itemTotalScore += item.score * count;
+    }
+  }
+
+  // 스테이지 점수 계산
   stages.forEach((stage, index) => {
     const currentStageData = stageData.data.find((s) => s.id === stage.id);
-
-    let stageEndTime;
-    if (index === stages.length - 1) {
-      stageEndTime = gameEndTime;
-    } else {
-      stageEndTime = stages[index + 1].timestamp;
-    }
+    let stageEndTime = index === stages.length - 1 ? gameEndTime : stages[index + 1].timestamp;
     const stageDuration = (stageEndTime - stage.timestamp) / 1000;
     serverScore += stageDuration * currentStageData.scorePerSecond;
   });
+
+  // 아이템 점수를 서버 점수에 추가
+  serverScore += itemTotalScore;
 
   // 최종 점수 검증
   if (Math.abs(clientScore - serverScore) > 5) {
@@ -44,6 +57,7 @@ export const gameEnd = (uuid, payload) => {
       details: {
         clientScore,
         serverScore,
+        itemScores,
         difference: Math.abs(clientScore - serverScore),
       },
     };
@@ -56,6 +70,8 @@ export const gameEnd = (uuid, payload) => {
     details: {
       clientScore,
       serverScore,
+      itemTotalScore,
+      itemScores,
     },
   };
 };

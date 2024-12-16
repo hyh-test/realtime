@@ -8,7 +8,7 @@ class Score {
   stageData = null;
   itemData = null;
   itemUnlockData = null;
-  itemScores = [];
+  itemScores = {};
 
   constructor(ctx, scaleRatio) {
     this.ctx = ctx;
@@ -84,8 +84,13 @@ class Score {
   }
 
   getItem(itemId) {
-    if (!this.itemData || !this.itemData.data) return;
+    // 데이터 유효성 검사
+    if (!this.itemData?.data) {
+      console.warn('아이템 데이터가 없습니다');
+      return;
+    }
 
+    // 아이템 찾기
     const item = this.itemData.data.find((item) => item.id === itemId);
     if (!item) {
       console.log(`Item with ID ${itemId} not found.`);
@@ -93,12 +98,16 @@ class Score {
     }
 
     this.score += item.score;
-    this.itemScores.push({
-      itemId: item.id,
-      score: item.score
-    });
-    
+    if (!this.itemScores[itemId]) {
+      this.itemScores[itemId] = 0;
+    }
+    this.itemScores[itemId]++;
+
     console.log(`Item collected: +${item.score} points`);
+  }
+
+  getItemScores() {
+    return this.itemScores;
   }
 
   reset() {
