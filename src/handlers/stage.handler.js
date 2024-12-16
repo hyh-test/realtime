@@ -6,11 +6,15 @@ export const moveStageHandler = (userId, payload) => {
   const { stages } = getGameAssets();
 
   let currentStages = getStage(userId);
-  console.log('Current Stages:', currentStages);
+
   if (!currentStages.length) {
     const { stages } = getGameAssets();
-    console.log(`Stages for user ${uuid}:`, stages);
-    setStage(userId, 1000, Date.now()); // 초기 스테이지 1000으로 설정
+    console.log('초기 스테이지 설정:', {
+      userId: userId,
+      stageId: 1000,
+      timestamp: Date.now(),
+    });
+    setStage(userId, 1000, Date.now());
     currentStages = getStage(userId);
     return { status: 'fail', message: 'No stages found for user' };
   }
@@ -18,6 +22,11 @@ export const moveStageHandler = (userId, payload) => {
   // 오름차순 정렬 후 가장 큰 스테이지 ID 확인 = 가장 상위의 스테이지 = 현재 스테이지
   currentStages.sort((a, b) => a.id - b.id);
   const currentStage = currentStages[currentStages.length - 1];
+  console.log('현재 스테이지 정보:', {
+    currentStageId: currentStage.id,
+    timestamp: currentStage.timestamp,
+    targetStage: payload.targetStage,
+  });
 
   // payload 의 currentStage 와 비교
   if (currentStage.id !== payload.currentStage) {
@@ -31,9 +40,6 @@ export const moveStageHandler = (userId, payload) => {
   const serverTime = Date.now();
   const elapsedTime = (serverTime - currentStage.timestamp) / 1000; // 초 단위로 계산
 
-  // 1초당 1점, 10점이상 다음스테이지 이동, 오차범위 5
-  // 클라이언트와 서버 간의 통신 지연시간을 고려해서 오차범위 설정
-  // elapsedTime 은 10 이상 10.5 이하 일 경우만 통과
   console.log('Elapsed Time:', elapsedTime);
   if (elapsedTime < payload.targetStage.score - 1 || elapsedTime > payload.targetStage.score + 3) {
     return { status: 'fail', message: 'Invalid elapsed time' };
@@ -45,6 +51,6 @@ export const moveStageHandler = (userId, payload) => {
   }
 
   // 유저의 다음 스테이지 정보 업데이트 + 현재 시간
-  setStage(userId, payload.targetStage, serverTime); // targetStage.id 대신 targetStage 사용
+  setStage(userId, payload.targetStage, serverTime);
   return { status: 'success' };
 };

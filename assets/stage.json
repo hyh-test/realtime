@@ -11,7 +11,7 @@
     {
       "stage": 2,
       "id": 1001,
-      "score": 20,
+      "score": 10,
       "scorePerSecond": 2
     },
     {
@@ -23,25 +23,25 @@
     {
       "stage": 4,
       "id": 1003,
-      "score": 60,
+      "score": 80,
       "scorePerSecond": 8
     },
     {
       "stage": 5,
       "id": 1004,
-      "score": 80,
+      "score": 160,
       "scorePerSecond": 16
     },
     {
       "stage": 6,
       "id": 1005,
-      "score": 160,
+      "score": 320,
       "scorePerSecond": 32
     },
     {
       "stage": 7,
       "id": 1006,
-      "score": 400,
+      "score": 560,
       "scorePerSecond": 64
     }
   ]

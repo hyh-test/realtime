@@ -7,17 +7,28 @@ class Item {
         this.width = width;
         this.height = height;
         this.image = image;
+        this.isVisible = false; // 아이템 가시성 상태 추가
     }
 
     update(speed, gameSpeed, deltaTime, scaleRatio) {
-        this.x -= speed * gameSpeed * deltaTime * scaleRatio;
+        // 현재 스테이지에서 사용 가능한 아이템인지 확인
+        this.isVisible = window.gameScore.isItemAvailableInCurrentStage(this.id);
+        
+        if (this.isVisible) {
+            this.x -= speed * gameSpeed * deltaTime * scaleRatio;
+        }
     }
 
     draw() {
-        this.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        // 사용 가능한 아이템만 그리기
+        if (this.isVisible) {
+            this.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        }
     }
 
     collideWith = (sprite) => {
+        if (!this.isVisible) return false;
+
         const adjustBy = 1.4;
         const result = (
             this.x < sprite.x + sprite.width / adjustBy &&
@@ -31,11 +42,11 @@ class Item {
             this.height = 0;
             this.x = 0;
             this.y = 0;
+            this.isVisible = false;
         }
 
-        // 충돌
         return result;
     }
 }
 
-export default Item
+export default Item;
