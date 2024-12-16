@@ -8,7 +8,6 @@ export const moveStageHandler = (userId, payload) => {
   let currentStages = getStage(userId);
 
   if (!currentStages.length) {
-    const { stages } = getGameAssets();
     console.log('초기 스테이지 설정:', {
       userId: userId,
       stageId: 1000,

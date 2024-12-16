@@ -8,6 +8,7 @@ class Score {
   stageData = null;
   itemData = null;
   itemUnlockData = null;
+  itemScores = [];
 
   constructor(ctx, scaleRatio) {
     this.ctx = ctx;
@@ -44,8 +45,8 @@ class Score {
 
     // 현재 점수에 해당하는 스테이지 찾기
     const appropriateStage = this.stageData.data.reduce((prev, curr) => {
-        if (this.score >= curr.score) return curr;
-        return prev;
+      if (this.score >= curr.score) return curr;
+      return prev;
     });
 
     // 점수 증가
@@ -53,15 +54,15 @@ class Score {
 
     // 현재 스테이지가 점수에 맞는 스테이지와 다르면 스테이지 변경
     if (appropriateStage.id !== this.currentStageId && this.stageChange) {
-        this.stageChange = false;
-        const previousStageId = this.currentStageId;
-        this.currentStageId = appropriateStage.id;
+      this.stageChange = false;
+      const previousStageId = this.currentStageId;
+      this.currentStageId = appropriateStage.id;
 
-        // 스테이지 변경 이벤트 전송
-        sendEvent(11, {
-            currentStage: previousStageId,
-            targetStage: appropriateStage.id,
-        });
+      // 스테이지 변경 이벤트 전송
+      sendEvent(11, {
+        currentStage: previousStageId,
+        targetStage: appropriateStage.id,
+      });
     }
 
     // 스테이지 변경 상태 업데이트
@@ -72,15 +73,15 @@ class Score {
   isItemAvailableInCurrentStage(itemId) {
     // itemUnlockData가 없거나 data 속성이 없으면 false 반환
     if (!this.itemUnlockData || !this.itemUnlockData.data) return false;
-    
+
     // 현재 스테이지의 아이템 언락 정보 찾기
     const currentStageUnlock = this.itemUnlockData.data.find(
-        unlock => unlock.stage_id === this.currentStageId
+      (unlock) => unlock.stage_id === this.currentStageId,
     );
-    
+
     // 현재 스테이지의 언락 정보가 있고, 해당 아이템이 허용 목록에 있으면 true 반환
     return currentStageUnlock && currentStageUnlock.item_id.includes(itemId);
-}
+  }
 
   getItem(itemId) {
     if (!this.itemData || !this.itemData.data) return;
@@ -92,6 +93,11 @@ class Score {
     }
 
     this.score += item.score;
+    this.itemScores.push({
+      itemId: item.id,
+      score: item.score
+    });
+    
     console.log(`Item collected: +${item.score} points`);
   }
 
@@ -140,8 +146,6 @@ class Score {
 
     this.ctx.fillText(stageText, stageX, y);
   }
-
-
 }
 
 export default Score;
