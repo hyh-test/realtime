@@ -89,11 +89,11 @@ class Score {
     // **다음 스테이지의 목표 점수**를 비교
     if (nextStage && Math.floor(this.score) >= nextStage.score && this.stageChange) {
       this.stageChange = false;
+      const previousStageId = this.currentStageId; // 이전 스테이지 ID 저장
       this.currentStageId = nextStage.id; // 다음 스테이지로 설정
       sendEvent(11, {
-        currentStage: this.currentStageId,
+        currentStage: previousStageId,
         targetStage: nextStage.id,
-        score: nextStage.score,
       });
       console.log(`Stage changed to: ${nextStage.stage}`);
     }
