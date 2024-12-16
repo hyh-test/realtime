@@ -188,7 +188,6 @@ function clearScreen() {
 function gameOver() {
   gameover = true;
   score.setHighScore();
-  setupGameReset();
 
   // 게임 종료 시점에 gameEnd 이벤트 전송
   sendEvent(3, {
@@ -196,6 +195,7 @@ function gameOver() {
     score: score.getScore(),
     itemScores: score.getItemScores(),
   });
+  setupGameReset();
 }
 
 function gameLoop(currentTime) {
