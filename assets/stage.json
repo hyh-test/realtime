@@ -11,37 +11,37 @@
     {
       "stage": 2,
       "id": 1001,
-      "score": 10,
+      "score": 20,
       "scorePerSecond": 2
     },
     {
       "stage": 3,
       "id": 1002,
-      "score": 20,
+      "score": 40,
       "scorePerSecond": 4
     },
     {
       "stage": 4,
       "id": 1003,
-      "score": 30,
+      "score": 60,
       "scorePerSecond": 8
     },
     {
       "stage": 5,
       "id": 1004,
-      "score": 40,
+      "score": 80,
       "scorePerSecond": 16
     },
     {
       "stage": 6,
       "id": 1005,
-      "score": 50,
+      "score": 160,
       "scorePerSecond": 32
     },
     {
       "stage": 7,
       "id": 1006,
-      "score": 60,
+      "score": 400,
       "scorePerSecond": 64
     }
   ]

@@ -12,41 +12,57 @@ export const gameStart = (uuid, payload) => {
 };
 
 export const gameEnd = (uuid, payload) => {
-  // 클라이언트에서 받은 게임 종료 시 타임스탬프와 총 점수
-  //:은 이름을 바꾼다
-  const { timestamp: gameEndTime, score } = payload;
+  const { timestamp: gameEndTime, score, itemScores } = payload;
   const stages = getStage(uuid);
   const { stages: stageData } = getGameAssets();
 
   if (!stages.length) {
-    return { status: 'fail', message: 'No stages found for user' };
+    return { status: 'fail', message: '사용자의 스테이지 정보를 찾을 수 없습니다' };
   }
 
-  // 각 스테이지의 지속 시간을 계산하여 총 점수 계산
+  // 스테이지 지속 시간 기반 점수 계산
   let totalScore = 0;
   stages.forEach((stage, index) => {
     const currentStageData = stageData.data.find((s) => s.id === stage.id);
 
     let stageEndTime;
     if (index === stages.length - 1) {
-      // 마지막 스테이지의 경우 종료 시간이 게임의 종료 시간
       stageEndTime = gameEndTime;
     } else {
-      // 다음 스테이지의 시작 시간을 현재 스테이지의 종료 시간으로 사용
       stageEndTime = stages[index + 1].timestamp;
     }
-    const stageDuration = (stageEndTime - stage.timestamp) / 1000; // 스테이지 지속 시간 (초 단위)
+    const stageDuration = (stageEndTime - stage.timestamp) / 1000;
     totalScore += stageDuration * currentStageData.scorePerSecond;
   });
 
-  // 점수와 타임스탬프 검증 (예: 클라이언트가 보낸 총점과 계산된 총점 비교)
-  // 오차범위 5
-  if (Math.abs(score - totalScore) > 5) {
-    return { status: 'fail', message: 'Score verification failed' };
+  console.log('스테이지 기반 점수:', totalScore);
+
+  // 아이템 점수 추가
+  if (itemScores && Array.isArray(itemScores)) {
+    console.log('받은 아이템 점수 데이터:', itemScores);
+    const itemScore = itemScores.reduce((sum, item) => {
+      console.log('현재 처리중인 아이템:', item);
+      return sum + (item.score || 0);
+    }, 0);
+    console.log('계산된 총 아이템 점수:', itemScore);
+    totalScore += itemScore;
   }
 
-  // 모든 검증이 통과된 후, 클라이언트에서 제공한 점수 저장하는 로직
-  // saveGameResult(userId, clientScore, gameEndTime);
-  // 검증이 통과되면 게임 종료 처리
-  return { status: 'success', message: 'Game ended successfully', score };
+  console.log('최종 총 점수:', totalScore);
+  console.log('클라이언트에서 받은 점수:', score);
+
+  // 점수 검증
+  if (Math.abs(score - totalScore) > 5) {
+    return { 
+      status: 'fail', 
+      message: '점수 검증 실패',
+      debug: {
+        calculatedScore: totalScore,
+        receivedScore: score,
+        difference: Math.abs(score - totalScore)
+      }
+    };
+  }
+
+  return { status: 'success', message: '게임이 성공적으로 종료되었습니다', score };
 };
