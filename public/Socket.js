@@ -8,6 +8,7 @@ const socket = io('http://localhost:3000', {
 
 let userId = null;
 let gameAssets = null;
+let scoreInstance = null;
 
 socket.on('response', (data) => {
   console.log('서버 응답:', data);
@@ -21,9 +22,8 @@ socket.on('connection', (data) => {
 socket.on('gameAssets', (data) => {
   console.log('게임 에셋 수신:', data);
   gameAssets = data;
-  // Score 클래스에 에셋 데이터 전달
-  if (window.gameScore) {
-    window.gameScore.setGameAssets(data);
+  if (scoreInstance) {
+    scoreInstance.setGameAssets(data);
   }
 });
 
@@ -44,4 +44,11 @@ const sendEvent = (handlerId, payload) => {
 
 const getGameAssets = () => gameAssets;
 
-export { sendEvent, getGameAssets };
+const setScoreInstance = (instance) => {
+  scoreInstance = instance;
+  if (gameAssets) {
+    scoreInstance.setGameAssets(gameAssets);
+  }
+};
+
+export { sendEvent, getGameAssets, setScoreInstance };

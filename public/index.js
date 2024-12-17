@@ -94,6 +94,8 @@ function createSprites() {
 
   cactiController = new CactiController(ctx, cactiImages, scaleRatio, GROUND_SPEED);
 
+  score = new Score(ctx, scaleRatio);
+
   const itemImages = ITEM_CONFIG.map((item) => {
     const image = new Image();
     image.src = item.image;
@@ -105,9 +107,7 @@ function createSprites() {
     };
   });
 
-  itemController = new ItemController(ctx, itemImages, scaleRatio, GROUND_SPEED);
-
-  score = new Score(ctx, scaleRatio);
+  itemController = new ItemController(ctx, itemImages, scaleRatio, GROUND_SPEED, score);
 }
 
 function getScaleRatio() {

@@ -1,5 +1,5 @@
 class Item {
-  constructor(ctx, id, x, y, width, height, image) {
+  constructor(ctx, id, x, y, width, height, image, scoreInstance) {
     this.ctx = ctx;
     this.id = id;
     this.x = x;
@@ -7,12 +7,12 @@ class Item {
     this.width = width;
     this.height = height;
     this.image = image;
-    this.isVisible = false; // 아이템 가시성 상태 추가
+    this.isVisible = false;
+    this.scoreInstance = scoreInstance;
   }
 
   update(speed, gameSpeed, deltaTime, scaleRatio) {
-    // 현재 스테이지에서 사용 가능한 아이템인지 확인
-    this.isVisible = window.gameScore.isItemAvailableInCurrentStage(this.id);
+    this.isVisible = this.scoreInstance.isItemAvailableInCurrentStage(this.id);
 
     if (this.isVisible) {
       this.x -= speed * gameSpeed * deltaTime * scaleRatio;
@@ -20,7 +20,6 @@ class Item {
   }
 
   draw() {
-    // 사용 가능한 아이템만 그리기
     if (this.isVisible) {
       this.ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
     }

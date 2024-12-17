@@ -9,12 +9,13 @@ class ItemController {
     items = [];
 
 
-    constructor(ctx, itemImages, scaleRatio, speed) {
+    constructor(ctx, itemImages, scaleRatio, speed, scoreInstance) {
         this.ctx = ctx;
         this.canvas = ctx.canvas;
         this.itemImages = itemImages;
         this.scaleRatio = scaleRatio;
         this.speed = speed;
+        this.scoreInstance = scoreInstance;
 
         this.setNextItemTime();
     }
@@ -46,7 +47,8 @@ class ItemController {
             y,
             itemInfo.width,
             itemInfo.height,
-            itemInfo.image
+            itemInfo.image,
+            this.scoreInstance
         );
 
         this.items.push(item);

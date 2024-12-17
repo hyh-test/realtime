@@ -1,4 +1,4 @@
-import { sendEvent, getGameAssets } from './Socket.js';
+import { sendEvent, getGameAssets, setScoreInstance } from './Socket.js';
 
 class Score {
   // 기본 점수 초기화
@@ -25,8 +25,8 @@ class Score {
     // 화면 크기 비율 설정
     this.scaleRatio = scaleRatio;
 
-    // 전역에서 Score 인스턴스에 접근할 수 있도록 설정
-    window.gameScore = this;
+    // Score 인스턴스를 Socket 모듈에 등록
+    setScoreInstance(this);
 
     // 이미 로드된 게임 에셋이 있다면 설정
     const assets = getGameAssets();
