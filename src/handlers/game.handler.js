@@ -134,24 +134,37 @@ export const broadcastMessage = (userId, payload) => {
 };
 
 export const updateHighScore = (userId, payload) => {
+  // userId가 없거나 'null'인 경우 체크
+  if (!userId || userId === 'null') {
+    console.error('유효하지 않은 userId:', userId);
+    return {
+      status: 'fail',
+      message: '유효하지 않은 사용자 ID',
+    };
+  }
+
   const newScore = payload.score;
-  console.log('새로운 하이스코어 업데이트 시도:', { userId, newScore, currentHighScore: globalHighScore });
+  console.log('새로운 하이스코어 업데이트 시도:', {
+    userId,
+    newScore,
+    currentHighScore: globalHighScore,
+  });
 
   if (newScore > globalHighScore) {
     globalHighScore = newScore;
     lastHighScoreHolder = {
-      uuid: userId,
+      uuid: userId, // 'null' 대신 실제 userId 사용
       score: newScore,
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
-    
+
     console.log('하이스코어 홀더 업데이트:', lastHighScoreHolder);
 
     return {
       broadcast: true,
       type: 'HIGH_SCORE_UPDATE',
       score: globalHighScore,
-      holder: lastHighScoreHolder
+      holder: lastHighScoreHolder,
     };
   }
   return null;

@@ -172,6 +172,7 @@ class Score {
         previousHighScore: this.globalHighScore
       });
 
+      // 서버에 스코어 업데이트 이벤트 전송 (이벤트 타입 13)
       sendEvent(13, {
         score: currentScore,
         previousHighScore: this.globalHighScore,
@@ -197,8 +198,17 @@ class Score {
 
   // 브로드캐스트 메시지 보내기
   sendBroadcast(message) {
+    // Socket.js에서 userId를 가져와서 사용
+    const userId = window.localStorage.getItem('game_uuid');
+    
+    if (!userId) {
+      console.error('사용자 ID를 찾을 수 없습니다');
+      return;
+    }
+
     sendEvent(12, {
       message: message,
+      userId: userId  // userId 추가
     });
   }
 

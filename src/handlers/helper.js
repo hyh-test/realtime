@@ -31,7 +31,19 @@ export const handleEvent = (io, socket, data) => {
     return;
   }
 
-  const response = handler(data.userId, data.payload);
+  console.log('handleEvent received data:', {
+    handlerId: data.handlerId,
+    uuid: data.uuid,
+    payload: data.payload
+  });
+
+  if (!data.uuid) {
+    console.error('UUID가 없습니다:', data);
+    socket.emit('response', { status: 'fail', message: 'UUID is required' });
+    return;
+  }
+
+  const response = handler(data.uuid, data.payload);
   if (response.broadcast) {
     io.emit('broadcast', response);
     return;
