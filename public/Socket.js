@@ -8,7 +8,8 @@ const socket = io('http://localhost:3000', {
 
 let userId = null;
 let gameAssets = null;
-let scoreInstance = null;
+let onAssetsLoadedCallback = null;
+let scoreUpdateCallback = null;
 
 socket.on('response', (data) => {
   console.log('서버 응답:', data);
@@ -19,11 +20,19 @@ socket.on('connection', (data) => {
   userId = data.uuid;
 });
 
-socket.on('gameAssets', (data) => {
+socket.on('gameData', (data) => {
   console.log('게임 에셋 수신:', data);
   gameAssets = data;
-  if (scoreInstance) {
-    scoreInstance.setGameAssets(data);
+  if (onAssetsLoadedCallback) {
+    onAssetsLoadedCallback(data);
+  }
+});
+
+socket.on('broadcast', (data) => {
+  if (data.type === 'BROADCAST_MESSAGE') {
+    console.log(`[브로드캐스트] ${data.payload.message}`);
+  } else if (data.type === 'HIGH_SCORE_UPDATE' && scoreUpdateCallback) {
+    scoreUpdateCallback(data.score);
   }
 });
 
@@ -31,24 +40,40 @@ const sendEvent = (handlerId, payload) => {
   console.log('이벤트 전송:', {
     handlerId,
     payload,
-    userId,
   });
 
   socket.emit('event', {
-    userId,
     clientVersion: CLIENT_VERSION,
     handlerId,
     payload,
   });
 };
 
-const getGameAssets = () => gameAssets;
-
-const setScoreInstance = (instance) => {
-  scoreInstance = instance;
+const setOnAssetsLoaded = (callback) => {
+  onAssetsLoadedCallback = callback;
   if (gameAssets) {
-    scoreInstance.setGameAssets(gameAssets);
+    callback(gameAssets);
   }
 };
 
-export { sendEvent, getGameAssets, setScoreInstance };
+const getGameAssets = () => gameAssets;
+
+const loadGameAssets = () => {
+  return new Promise((resolve) => {
+    if (gameAssets) {
+      resolve(gameAssets);
+      return;
+    }
+
+    socket.on('gameData', (data) => {
+      gameAssets = data;
+      resolve(data);
+    });
+  });
+};
+
+export const registerScoreHandler = (callback) => {
+  scoreUpdateCallback = callback;
+};
+
+export { sendEvent, getGameAssets, setOnAssetsLoaded, loadGameAssets };
