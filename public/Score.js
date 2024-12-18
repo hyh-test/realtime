@@ -55,16 +55,15 @@ class Score {
       return;
     }
 
-    // 불필요한 로그 제거
     this.stageData = assets.stages;
     this.itemData = assets.items;
     this.itemUnlockData = assets.itemUnlocks;
 
-    // 중요 정보만 로깅
     if (assets.globalHighScore) {
       this.globalHighScore = assets.globalHighScore;
     }
 
+    //현재 스테이지 배열0의 값을 현재 스테이지 id로 설정
     if (this.stageData && this.stageData.data.length > 0) {
       this.currentStageId = this.stageData.data[0].id;
     }
@@ -165,11 +164,14 @@ class Score {
   setHighScore() {
     const currentScore = Math.floor(this.score);
 
-    // 현재 점수가 전역 최고 점수보다 높을 때만 업데이트
     if (currentScore > this.globalHighScore) {
       this.globalHighScore = currentScore;
 
-      // 서버에 새로운 최고 점수 전송
+      console.log('🎮 새로운 하이스코어 달성!', {
+        score: currentScore,
+        previousHighScore: this.globalHighScore
+      });
+
       sendEvent(13, {
         score: currentScore,
         previousHighScore: this.globalHighScore,

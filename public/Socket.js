@@ -36,6 +36,10 @@ socket.on('broadcast', (data) => {
   }
 });
 
+socket.on('highScoreUser', (data) => {
+  console.log(`🏆 [하이스코어 보유자] ${data.message}`);
+});
+
 const sendEvent = (handlerId, payload) => {
   console.log('이벤트 전송:', {
     handlerId,

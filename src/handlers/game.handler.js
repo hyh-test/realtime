@@ -2,11 +2,14 @@ import { getGameAssets } from '../init/assets.js';
 import { getStage, setStage, clearStage } from '../models/stage.model.js';
 
 let globalHighScore = 0;
+let lastHighScoreHolder = null;
 
 // 전역 최고 점수 가져오는 함수 추가
 export const getGlobalHighScore = () => {
   return globalHighScore;
 };
+
+export const getLastHighScoreHolder = () => lastHighScoreHolder;
 
 // 게임 시작 처리 함수
 export const gameStart = (uuid, payload) => {
@@ -132,14 +135,24 @@ export const broadcastMessage = (userId, payload) => {
 
 export const updateHighScore = (userId, payload) => {
   const newScore = payload.score;
+  console.log('새로운 하이스코어 업데이트 시도:', { userId, newScore, currentHighScore: globalHighScore });
 
   if (newScore > globalHighScore) {
     globalHighScore = newScore;
+    lastHighScoreHolder = {
+      uuid: userId,
+      score: newScore,
+      timestamp: Date.now()
+    };
+    
+    console.log('하이스코어 홀더 업데이트:', lastHighScoreHolder);
 
     return {
       broadcast: true,
       type: 'HIGH_SCORE_UPDATE',
       score: globalHighScore,
+      holder: lastHighScoreHolder
     };
   }
+  return null;
 };
