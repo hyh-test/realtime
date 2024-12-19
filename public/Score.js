@@ -134,17 +134,26 @@ class Score {
     // 현재 스테이지에서 아이템 사용 가능 여부 검증
     if (!this.isItemAvailableInCurrentStage(itemId)) {
       console.log(`아이템 ${itemId}는 현재 스테이지에서 사용할 수 없습니다.`);
-      return; // 서버에 점수 연결하지 않음
+      this.restartGame(); // 게임 재시작 함수 호출
+      return;
     }
 
     // 아이템 점수 추가 및 기록
-    this.score += item.score;
+    this.score += item.score; // 점수 업데이트
     if (!this.itemScores[itemId]) {
       this.itemScores[itemId] = 0;
     }
     this.itemScores[itemId]++;
 
     console.log(`Item collected: +${item.score} points`);
+  }
+
+  // 게임 재시작 처리
+  restartGame() {
+    console.log('게임이 재시작됩니다.');
+    // 게임 초기화 로직 추가
+    this.reset(); // 점수 및 상태 초기화
+    // 추가적인 게임 재시작 로직을 여기에 추가
   }
 
   // 아이템별 획득 점수 반환
