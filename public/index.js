@@ -192,7 +192,7 @@ function gameOver() {
   // 게임 종료 시점에 gameEnd 이벤트 전송
   sendEvent(3, {
     timestamp: Date.now(),
-    score: score.getScore(),
+    score: Math.floor(score.getScore()),
     itemScores: score.getItemScores(),
   });
   setupGameReset();
