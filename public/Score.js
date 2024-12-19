@@ -114,6 +114,7 @@ class Score {
       (unlock) => unlock.stage_id === this.currentStageId,
     );
 
+    // 현재 스테이지에서 아이템이 사용 가능한지 확인
     return currentStageUnlock && currentStageUnlock.item_id.includes(itemId);
   }
 
@@ -128,6 +129,12 @@ class Score {
     if (!item) {
       console.log(`Item with ID ${itemId} not found.`);
       return;
+    }
+
+    // 현재 스테이지에서 아이템 사용 가능 여부 검증
+    if (!this.isItemAvailableInCurrentStage(itemId)) {
+      console.log(`아이템 ${itemId}는 현재 스테이지에서 사용할 수 없습니다.`);
+      return; // 서버에 점수 연결하지 않음
     }
 
     // 아이템 점수 추가 및 기록
