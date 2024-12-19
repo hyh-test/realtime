@@ -169,7 +169,7 @@ class Score {
 
       console.log('🎮 새로운 하이스코어 달성!', {
         score: currentScore,
-        previousHighScore: this.globalHighScore
+        previousHighScore: this.globalHighScore,
       });
 
       // 서버에 스코어 업데이트 이벤트 전송 (이벤트 타입 13)
@@ -200,7 +200,7 @@ class Score {
   sendBroadcast(message) {
     // Socket.js에서 userId를 가져와서 사용
     const userId = window.localStorage.getItem('game_uuid');
-    
+
     if (!userId) {
       console.error('사용자 ID를 찾을 수 없습니다');
       return;
@@ -208,7 +208,6 @@ class Score {
 
     sendEvent(12, {
       message: message,
-      userId: userId  // userId 추가
     });
   }
 

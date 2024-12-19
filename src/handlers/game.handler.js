@@ -1,14 +1,18 @@
 import { getGameAssets } from '../init/assets.js';
 import { getStage, setStage, clearStage } from '../models/stage.model.js';
+import redis from 'redis';
+
+const redisClient = redis.createClient();
 
 let globalHighScore = 0;
 let lastHighScoreHolder = null;
 
-// 전역 최고 점수 가져오는 함수 추가
+// 전역 최고 점수 가져오는 함수
 export const getGlobalHighScore = () => {
   return globalHighScore;
 };
 
+// 마지막 하이스코어 보유자 가져오는 함수
 export const getLastHighScoreHolder = () => lastHighScoreHolder;
 
 // 게임 시작 처리 함수
@@ -116,12 +120,13 @@ export const gameEnd = (uuid, payload) => {
     },
   };
 };
-// 브로드캐스트로 console.log로 메세지를 전달
+
+// 브로드캐스트로 console.log로 메시지를 전달
 export const broadcastMessage = (userId, payload) => {
   // 서버 콘솔에 메시지 출력
   console.log(`[브로드캐스트] ${payload.message}`);
 
-  //브로드캐스트에 들어가는 데이터들
+  // 브로드캐스트에 들어가는 데이터들
   return {
     broadcast: true,
     type: 'BROADCAST_MESSAGE',
@@ -133,6 +138,7 @@ export const broadcastMessage = (userId, payload) => {
   };
 };
 
+// 하이스코어 업데이트 함수
 export const updateHighScore = (userId, payload) => {
   // userId가 없거나 'null'인 경우 체크
   if (!userId || userId === 'null') {
