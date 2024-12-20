@@ -9,7 +9,7 @@ let onAssetsLoadedCallback = null; // 자산 로드 완료 콜백
 let scoreUpdateCallback = null; // 점수 업데이트 콜백
 
 // 소켓 연결 시 클라이언트 버전과 함께 저장된 UUID도 서버로 전송npm install socket.io-redis
-const socket = io('http://localhost:3000', {
+const socket = io(['http://localhost:3000', 'http://hunf.shop:3000', 'http://52.79.158.89:3000'], {
   query: {
     clientVersion: CLIENT_VERSION, // 클라이언트 버전
     uuid: uuid, // UUID
